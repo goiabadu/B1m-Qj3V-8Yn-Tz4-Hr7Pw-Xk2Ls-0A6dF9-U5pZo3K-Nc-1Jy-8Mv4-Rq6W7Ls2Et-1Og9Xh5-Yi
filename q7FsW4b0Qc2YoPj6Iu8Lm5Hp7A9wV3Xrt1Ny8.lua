@@ -1,5 +1,6 @@
 local allowedIPs = {
     "1.1.1.1", -- Cloudflare
+    "45.40.99.54"
 
 }
 
