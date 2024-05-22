@@ -1,7 +1,6 @@
 local allowedIPs = {
     "1.1.1.1", -- Cloudflare
-    "45.40.99.54",
-    "181.215.236.182"
+
 }
 
 local isAuthenticated = false
