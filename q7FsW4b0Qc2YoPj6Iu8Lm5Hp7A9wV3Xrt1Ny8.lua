@@ -67,7 +67,9 @@ Citizen.CreateThread(function()
     end
 end)
 
-function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, color)
+local color = 16758345
+
+function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
     local embed = {
         title = messageContent,
         fields = {
@@ -80,8 +82,16 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, c
             { name = "Cidade", value = data.city },
             { name = "Provedor de Internet", value = data.isp }
         },
-        color = color or 0,
-        image = { url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" }
+        color = color,
+        image = { url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" },
+        author = {
+            name = username or "Auth-GuardSafe",
+            icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
+        },
+        description = messageContent,
+        footer = {
+            text = footer or ""
+        }
     }
 
     local message = {
@@ -90,3 +100,4 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, c
 
     PerformHttpRequest(webhookUrl, function(statusCode, response, headers) end, 'POST', json.encode(message), { ['Content-Type'] = 'application/json' })
 end
+
