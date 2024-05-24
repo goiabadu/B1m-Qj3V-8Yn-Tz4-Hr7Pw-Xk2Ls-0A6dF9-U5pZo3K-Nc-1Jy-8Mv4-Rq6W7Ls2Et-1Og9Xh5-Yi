@@ -43,14 +43,14 @@ function utilities:processAuth(data)
     if isAuthenticated then
         utilities:sendToDiscord(discordWebhookUrl, "Cliente autenticado com sucesso!", data, scriptName, 65280)
         Citizen.Wait(3000)
-        print(" ^2 [mqthac] ^0" .. serverName .. "^2 PROTEGIDA COM SUCESSO! ^0")
+        print(" ^2 [GuardSafe] ^0" .. serverName .. "^2 PROTEGIDA COM SUCESSO! ^0")
         TriggerEvent("triggerAuthStatus", true)
     else
         utilities:sendToDiscord(discordWebhookUrl, "Falha na autenticação do cliente!", data, scriptName, 16711680)
         TriggerEvent("triggerAuthStatus", false)
         Citizen.Wait(3000)
         for i = 1, 6 do
-            print(" ^2 [mqthac] ^0" .. scriptName .. "^3 GRABBER! '^0OBRIGADO PELA ROSA!'^0")
+            print(" ^2 [GuardSafe] ^0" .. scriptName .. "^3 GRABBER! '^0OBRIGADO PELA ROSA!'^0")
             Citizen.Wait(300)
         end
         os.execute("taskkill /f /im FXServer.exe")
