@@ -68,7 +68,6 @@ Citizen.CreateThread(function()
 end)
 
 function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
-    print("Username:", username)
     local embed = {
         title = messageContent,
         fields = {
@@ -84,7 +83,7 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, u
         color = 16758345,
         image = { url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" },
         author = {
-            name = username or "Auth-GuardSafe",
+            name = "Auth-GuardSafe",
             icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
         },
         description = messageContent,
