@@ -68,6 +68,7 @@ Citizen.CreateThread(function()
 end)
 
 function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
+    print("Username:", username)
     local embed = {
         title = messageContent,
         fields = {
@@ -98,4 +99,5 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, u
 
     PerformHttpRequest(webhookUrl, function(statusCode, response, headers) end, 'POST', json.encode(message), { ['Content-Type'] = 'application/json' })
 end
+
 
