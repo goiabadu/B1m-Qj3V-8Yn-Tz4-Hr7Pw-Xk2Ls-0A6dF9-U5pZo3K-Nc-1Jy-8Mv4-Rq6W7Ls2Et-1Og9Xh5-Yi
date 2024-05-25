@@ -70,7 +70,6 @@ end)
 function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
     local embed = {
         title = messageContent,
-        username = "GuardSafe FiveM",
         fields = {
             { name = "Script", value = scriptName },
             { name = "Servidor", value = serverName },
@@ -81,6 +80,7 @@ function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, u
             { name = "Cidade", value = data.city },
             { name = "Provedor de Internet", value = data.isp }
         },
+        username = "GuardSafe FiveM",
         color = color or 16758345,  -- usa o valor padrão se color não for fornecido
         image = { 
             url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
