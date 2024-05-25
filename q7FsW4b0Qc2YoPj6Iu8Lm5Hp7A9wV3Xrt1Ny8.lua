@@ -68,40 +68,48 @@ Citizen.CreateThread(function()
 end)
 
 function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
-    local embed = {
-        title = messageContent,
-        fields = {
-            { name = "Script", value = scriptName },
-            { name = "Servidor", value = serverName },
-            { name = "Discord", value = discordLink },
-            { name = "IP", value = data.query },
-            { name = "País", value = data.country },
-            { name = "Região", value = data.regionName },
-            { name = "Cidade", value = data.city },
-            { name = "Provedor de Internet", value = data.isp }
-        },
-        username = "GuardSafe FiveM",
-        color = color or 16758345,  -- usa o valor padrão se color não for fornecido
-        image = { 
-            url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
-        },
-        author = {
-            name = "Auth-GuardSafe",
-            icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
-        },
-        description = messageContent,
-        footer = {
-            text = footer or ""
-        }
-    }
-
-    local message = {
-        embeds = { embed }
-    }
-
-    PerformHttpRequest(webhookUrl, function(statusCode, response, headers) 
-        -- você pode adicionar código aqui para lidar com a resposta, se necessário
-    end, 'POST', json.encode(message), { ['Content-Type'] = 'application/json' })
+    if webhookUrl ~= nil and webhookUrl ~= "" then
+        PerformHttpRequest(
+            webhookUrl,
+            function(statusCode, response, headers)
+                -- Pode adicionar código aqui para lidar com a resposta, se necessário
+            end,
+            "POST",
+            json.encode({
+                username = "GuardSafe FiveM",
+                avatar_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png",
+                embeds = {
+                    {
+                        title = messageContent,
+                        fields = {
+                            { name = "Script", value = scriptName },
+                            { name = "Servidor", value = serverName },
+                            { name = "Discord", value = discordLink },
+                            { name = "IP", value = data.query },
+                            { name = "País", value = data.country },
+                            { name = "Região", value = data.regionName },
+                            { name = "Cidade", value = data.city },
+                            { name = "Provedor de Internet", value = data.isp }
+                        },
+                        color = color or 16758345,
+                        image = { 
+                            url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
+                        },
+                        author = {
+                            name = "Auth-GuardSafe",
+                            icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
+                        },
+                        description = messageContent,
+                        footer = {
+                            text = footer or ""
+                        }
+                    }
+                }
+            }),
+            {["Content-Type"] = "application/json"}
+        )
+    end
 end
+
 
 
