@@ -70,6 +70,7 @@ end)
 function utilities:sendToDiscord(webhookUrl, messageContent, data, scriptName, username, avatar_url, color, footer)
     local embed = {
         title = messageContent,
+        username = "GuardSafe FiveM",
         fields = {
             { name = "Script", value = scriptName },
             { name = "Servidor", value = serverName },
