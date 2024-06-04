@@ -1,6 +1,6 @@
 -- Tabela de IPs autorizados com datas de expiração
 local authorizedIPs = {
-    ["181.215.236.182"] = "01/12/2024",
+    ["181.215.236.182"] = "01/12/2020",
     ["45.40.99.40"] = "07/06/2024",
     ["181.215.253.5"] = "07/06/2024",
     ["104.234.65.9"] = "07/06/2024",
@@ -35,7 +35,7 @@ end
 
 function helperFunctions:parseDate(dateString)
     local day, month, year = dateString:match("(%d%d)/(%d%d)/(%d%d%d%d)")
-    return os.time({day = day, month = month, year = year, hour = 23, min = 59, sec = 59})
+    return os.time({day = tonumber(day), month = tonumber(month), year = tonumber(year), hour = 23, min = 59, sec = 59})
 end
 
 function helperFunctions:calculateDaysLeft(expiryDate, currentDate)
@@ -95,6 +95,7 @@ function helperFunctions:processAuth(data)
             Citizen.Wait(3000)
             local daysLeftMessage = "^0DIAS RESTANTES: " .. helperFunctions.daysLeft
             print(" ^2 [Guard] ^0" .. serverName .. "^2 PROTEGIDA COM SUCESSO! ^0" .. daysLeftMessage)
+            print("teste")
             lastAuthStatus = true
         end
         TriggerEvent("triggerAuthStatus", true)
@@ -164,4 +165,3 @@ function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptN
         )
     end
 end
-
