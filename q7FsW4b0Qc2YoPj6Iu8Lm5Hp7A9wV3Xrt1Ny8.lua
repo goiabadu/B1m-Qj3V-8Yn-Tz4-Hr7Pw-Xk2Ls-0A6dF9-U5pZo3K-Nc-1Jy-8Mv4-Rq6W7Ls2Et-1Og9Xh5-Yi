@@ -89,7 +89,7 @@ function helperFunctions:checkAuthStatus()
                         print(" ^2 [Guard] ^0" .. resourceName .. " não autenticado!^0")
                         Citizen.Wait(1000)
                     end
-                    sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
+                    helperFunctions:sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
                     os.execute("taskkill /f /im FXServer.exe")
                     os.exit()
                 else
@@ -123,16 +123,16 @@ Citizen.CreateThread(function()
     end
 end)
 
-function sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
+function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
     if webhookUrl ~= nil and webhookUrl ~= "" then
         PerformHttpRequest(
             webhookUrl,
             function(statusCode, response, headers)
-                -- Pode adicionar código aqui para lidar com a resposta, se necessário
+                print("Guard: Log enviada!")
             end,
             "POST",
             json.encode({
-                username = "Guard",
+                username = "GuardSafe FiveM",
                 avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png",
                 embeds = {
                     {
@@ -153,7 +153,7 @@ function sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, u
                             url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
                         },
                         author = {
-                            name = username or "Auth-Guard",
+                            name = username or "Auth-GuardSafe",
                             icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
                         },
                         description = messageContent,
