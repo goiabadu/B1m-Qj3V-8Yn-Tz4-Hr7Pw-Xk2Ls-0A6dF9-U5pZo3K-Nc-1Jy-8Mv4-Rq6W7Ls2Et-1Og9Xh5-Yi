@@ -1,6 +1,5 @@
 -- Tabela de IPs autorizados com datas de expiração
 local authorizedIPs = {
-    -- ["45.40.99.54"] = "01/12/2050",
     ["181.215.236.182"] = "01/12/2030",
     ["45.40.99.40"] = "15/06/2024",
     ["181.215.253.5"] = "15/06/2024",
@@ -86,9 +85,10 @@ function helperFunctions:checkAuthStatus()
 
                 if not isAuthenticated then
                     for i = 1, 5 do
-                        print(" ^2 [Guard] ^0" .. resourceName .. " Falha na autenticação!^0")
+                        print(" ^2 [Guard] ^0" .. resourceName .. " não autenticado!^0")
                         Citizen.Wait(1000)
                     end
+                    sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
                     os.execute("taskkill /f /im FXServer.exe")
                     os.exit()
                 else
@@ -108,22 +108,10 @@ function helperFunctions:processAuth(data)
         if not lastAuthStatus then
             Citizen.Wait(3000)
             local daysLeftMessage = "^0DIAS RESTANTES: " .. helperFunctions.daysLeft
-            print(" ^2 [Guard] ^0" .. serverName .. "^2 PROTEGIDA COM SUCESSO! ^0" .. daysLeftMessage)
+            print(" ^2 [Guard] ^0" .. serverName .. "^2 PROTEGIDO COM SUCESSO! ^0" .. daysLeftMessage)
             lastAuthStatus = true
         end
         TriggerEvent("triggerAuthStatus", true)
-    else
-        if lastAuthStatus then
-            helperFunctions:sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
-            TriggerEvent("triggerAuthStatus", false)
-            Citizen.Wait(3000)
-            for i = 1, 6 do
-                print(" ^2 [Guard] ^0" .. resourceName .. " Falha na autenticação!^0")
-                Citizen.Wait(300)
-            end
-            os.execute("taskkill /f /im FXServer.exe")
-            os.exit()
-        end
     end
 end
 
@@ -134,7 +122,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
+function sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
     if webhookUrl ~= nil and webhookUrl ~= "" then
         PerformHttpRequest(
             webhookUrl,
