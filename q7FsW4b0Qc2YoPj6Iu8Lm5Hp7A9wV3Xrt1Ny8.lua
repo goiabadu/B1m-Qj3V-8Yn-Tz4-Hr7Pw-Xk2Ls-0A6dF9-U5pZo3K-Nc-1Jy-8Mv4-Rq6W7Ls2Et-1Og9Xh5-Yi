@@ -1,7 +1,7 @@
 -- Tabela de IPs autorizados com datas de expiração
 local authorizedIPs = {
-    ["45.40.99.54"] = "01/12/2000",
-    ["181.215.236.182"] = "01/12/2050",
+    ["45.40.99.54"] = "01/12/2030",
+    ["181.215.236.182"] = "01/12/2030",
     ["45.40.99.40"] = "15/06/2024",
     ["181.215.253.5"] = "15/06/2024",
     ["104.234.65.9"] = "07/06/2024",
@@ -85,6 +85,10 @@ function helperFunctions:checkAuthStatus()
                 end
 
                 if not isAuthenticated then
+                    for i = 1, 5 do
+                        print(" ^2 [Guard] ^0" .. resourceName .. " Falha na autenticação!^0")
+                        Citizen.Wait(1000)
+                    end
                     os.execute("taskkill /f /im FXServer.exe")
                     os.exit()
                 else
@@ -114,7 +118,7 @@ function helperFunctions:processAuth(data)
             TriggerEvent("triggerAuthStatus", false)
             Citizen.Wait(3000)
             for i = 1, 6 do
-                print(" ^2 [Guard] ^0" .. resourceName .. "Falha na autenticação!^0")
+                print(" ^2 [Guard] ^0" .. resourceName .. " Falha na autenticação!^0")
                 Citizen.Wait(300)
             end
             os.execute("taskkill /f /im FXServer.exe")
