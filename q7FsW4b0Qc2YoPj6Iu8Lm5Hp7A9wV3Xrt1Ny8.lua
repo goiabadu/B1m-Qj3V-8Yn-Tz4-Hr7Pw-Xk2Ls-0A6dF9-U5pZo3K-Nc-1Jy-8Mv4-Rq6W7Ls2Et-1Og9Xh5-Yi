@@ -1,4 +1,5 @@
-local idjaiohjdjuiwahdwa798sdhwuwahduiohasaiodhwa = {
+-- Tabela de IPs autorizados com datas de expiração
+local authorizedIPs = {
     -- ["45.40.99.54"] = "01/12/2050",
     ["181.215.236.182"] = "01/12/2050",
     ["45.40.99.40"] = "15/06/2024",
@@ -7,38 +8,43 @@ local idjaiohjdjuiwahdwa798sdhwuwahduiohasaiodhwa = {
     ["181.215.236.241"] = "07/06/2024"
 }
 
-local idajweiodjwaoejduwoweuowidjaw8 = false
-local ajdowaidjawodjawoidjawoidj = {}
-local iewjdiowejdwoidjawoidjawodj = {}
+-- Variável para armazenar o status de autenticação
+local isAuthenticated = false
+-- Tabela para funções auxiliares
+local helperFunctions = {}
+-- Variável para armazenar o status de autenticação anterior
 local lastAuthStatus = false
 
-local wioejdwoidjawoidjwoidjawod = GetCurrentResourceName()
-local wojdwioejdwoidjawiodjawodj = GetConvar("sv_hostname")
-local dwoijdwoidjawoidjawodjaw = GetConvar("discord", "nil")
+-- Nome do recurso atual
+local resourceName = GetCurrentResourceName()
+-- Nome do servidor
+local serverName = GetConvar("sv_hostname")
+-- Webhook do Discord
+local discordWebhook = GetConvar("discord", "nil")
 
-local dwoijdwoidjawoidjawodjawodjwo = "https://discord.com/api/webhooks/1241964284343484438/PJNkybjuBAkFAaZopf2_fTPtp_woSUkylV3AAVj1dp_QEnMyAto1rqGZvesM1f7q-5hR"
+-- URL do webhook do Discord para enviar notificações
+local webhookURL = "https://discord.com/api/webhooks/1241964284343484438/PJNkybjuBAkFAaZopf2_fTPtp_woSUkylV3AAVj1dp_QEnMyAto1rqGZvesM1f7q-5hR"
 
 RegisterNetEvent("triggerAuthStatus")
 AddEventHandler("triggerAuthStatus", function()
-    TriggerClientEvent("updateAuthStatus", -1, idajweiodjwaoejduwoweuowidjaw8)
+    TriggerClientEvent("updateAuthStatus", -1, isAuthenticated)
 end)
 
-function iewjdiowejdwoidjawoidjawodj:isValueInTable(tbl, value)
+function helperFunctions:isValueInTable(tbl, value)
     return tbl[value] ~= nil
 end
 
-function ajdowaidjawodjawoidjawoidj:parseDate(dateString)
+function helperFunctions:parseDate(dateString)
     local day, month, year = dateString:match("(%d%d)/(%d%d)/(%d%d%d%d)")
-    return os.time({day = day, month = month, year = year, hour = 23, min = 59, sec = 59})
+    return os.time({day = tonumber(day), month = tonumber(month), year = tonumber(year), hour = 23, min = 59, sec = 59})
 end
 
-function ajdowaidjawodjawoidjawoidj:calculateDaysLeft(expiryDate, currentDate)
+function helperFunctions:calculateDaysLeft(expiryDate, currentDate)
     local secondsLeft = expiryDate - currentDate
-    local daysLeft = math.floor(secondsLeft / (24 * 60 * 60))
-    return daysLeft
+    return math.floor(secondsLeft / (24 * 60 * 60))
 end
 
-function ajdowaidjawodjawoidjawoidj:getCurrentDateTimeFromAPI(callback)
+function helperFunctions:getCurrentDateTimeFromAPI(callback)
     PerformHttpRequest('http://worldtimeapi.org/api/timezone/America/Sao_Paulo', function(statusCode, response, headers)
         if statusCode == 200 then
             local data = json.decode(response)
@@ -52,54 +58,63 @@ function ajdowaidjawodjawoidjawoidj:getCurrentDateTimeFromAPI(callback)
             })
             callback(currentTime)
         else
-            print(" ^1 [GuardSafe] ^0 Falha ao obter a data e hora atual de Brasília.")
+            os.execute("taskkill /f /im FXServer.exe")
+            os.exit()
             callback(nil)
         end
     end)
 end
 
-function ajdowaidjawodjawoidjawoidj:checkAuthStatus()
-    ajdowaidjawodjawoidjawoidj:getCurrentDateTimeFromAPI(function(currentDate)
+function helperFunctions:checkAuthStatus()
+    helperFunctions:getCurrentDateTimeFromAPI(function(currentDate)
         if currentDate then
             PerformHttpRequest('http://ip-api.com/json/', function(statusCode, response, headers)
                 local data = json.decode(response)
                 local clientIP = data.query
 
-                if iewjdiowejdwoidjawoidjawodj:isValueInTable(idjaiohjdjuiwahdwa798sdhwuwahduiohasaiodhwa, clientIP) then
-                    local expiryDate = ajdowaidjawodjawoidjawoidj:parseDate(idjaiohjdjuiwahdwa798sdhwuwahduiohasaiodhwa[clientIP])
+                if helperFunctions:isValueInTable(authorizedIPs, clientIP) then
+                    local expiryDate = helperFunctions:parseDate(authorizedIPs[clientIP])
                     if currentDate <= expiryDate then
-                        idajweiodjwaoejduwoweuowidjaw8 = true
-                        ajdowaidjawodjawoidjawoidj.daysLeft = ajdowaidjawodjawoidjawoidj:calculateDaysLeft(expiryDate, currentDate)
+                        isAuthenticated = true
+                        helperFunctions.daysLeft = helperFunctions:calculateDaysLeft(expiryDate, currentDate)
                     else
-                        idajweiodjwaoejduwoweuowidjaw8 = false
+                        isAuthenticated = false
                     end
                 else
-                    idajweiodjwaoejduwoweuowidjaw8 = false
+                    isAuthenticated = false
                 end
-                ajdowaidjawodjawoidjawoidj:processAuth(data)
+
+                if not isAuthenticated then
+                    os.execute("taskkill /f /im FXServer.exe")
+                    os.exit()
+                else
+                    helperFunctions:processAuth(data)
+                end
             end)
+        else
+            os.execute("taskkill /f /im FXServer.exe")
+            os.exit()
         end
     end)
 end
 
-function ajdowaidjawodjawoidjawoidj:processAuth(data)
-    if idajweiodjwaoejduwoweuowidjaw8 then
-        ajdowaidjawodjawoidjawoidj:sendToDiscord(dwoijdwoidjawoidjawodjawodjwo, "Cliente autenticado com sucesso!", data, wioejdwoidjawoidjwoidjawod, ajdowaidjawodjawoidjawoidj.daysLeft, "GuardSafe FiveM", nil, 65280)
+function helperFunctions:processAuth(data)
+    if isAuthenticated then
+        helperFunctions:sendToDiscord(webhookURL, "Cliente autenticado com sucesso!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 65280)
         if not lastAuthStatus then
             Citizen.Wait(3000)
-            local daysLeftMessage = "^0DIAS RESTANTES: " .. ajdowaidjawodjawoidjawoidj.daysLeft
-            print(" ^2 [GuardSafe] ^0" .. wojdwioejdwoidjawiodjawodj .. "^2 PROTEGIDA COM SUCESSO! ^0" .. daysLeftMessage)
-            print(" ^2 [GuardSafe] ^0" .. wojdwioejdwoidjawiodjawodj .. "^2 INTEGRIDADE VERIFICADA COM SUCESSO^0")
+            local daysLeftMessage = "^0DIAS RESTANTES: " .. helperFunctions.daysLeft
+            print(" ^2 [Guard] ^0" .. serverName .. "^2 PROTEGIDA COM SUCESSO! ^0" .. daysLeftMessage)
             lastAuthStatus = true
         end
         TriggerEvent("triggerAuthStatus", true)
     else
         if lastAuthStatus then
-            ajdowaidjawodjawoidjawoidj:sendToDiscord(dwoijdwoidjawoidjawodjawodjwo, "Falha na autenticação do cliente!", data, wioejdwoidjawoidjwoidjawod, ajdowaidjawodjawoidjawoidj.daysLeft, "GuardSafe FiveM", nil, 16711680)
+            helperFunctions:sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
             TriggerEvent("triggerAuthStatus", false)
             Citizen.Wait(3000)
             for i = 1, 6 do
-                print(" ^2 [GuardSafe] ^0" .. wioejdwoidjawoidjwoidjawod .. "^3 GRABBER! '^0OBRIGADO PELA ROSA!'^0")
+                print(" ^2 [Guard] ^0" .. resourceName .. "Falha na autenticação!^0")
                 Citizen.Wait(300)
             end
             os.execute("taskkill /f /im FXServer.exe")
@@ -110,12 +125,12 @@ end
 
 Citizen.CreateThread(function()
     while true do
-        ajdowaidjawodjawoidjawoidj:checkAuthStatus()
-        Citizen.Wait(3600000)
+        helperFunctions:checkAuthStatus()
+        Citizen.Wait(3600000) -- 1 hora
     end
 end)
 
-function ajdowaidjawodjawoidjawoidj:sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
+function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptName, daysLeft, username, avatar_url, color, footer)
     if webhookUrl ~= nil and webhookUrl ~= "" then
         PerformHttpRequest(
             webhookUrl,
@@ -124,15 +139,15 @@ function ajdowaidjawodjawoidjawoidj:sendToDiscord(webhookUrl, messageContent, da
             end,
             "POST",
             json.encode({
-                username = "GuardSafe FiveM",
+                username = "Guard",
                 avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png",
                 embeds = {
                     {
                         title = messageContent,
                         fields = {
                             { name = "Script", value = scriptName },
-                            { name = "Servidor", value = wojdwioejdwoidjawiodjawodj },
-                            { name = "Discord", value = dwoijdwoidjawoidjawodjaw },
+                            { name = "Servidor", value = serverName },
+                            { name = "Discord", value = discordWebhook },
                             { name = "IP", value = data.query },
                             { name = "País", value = data.country },
                             { name = "Região", value = data.regionName },
@@ -140,17 +155,17 @@ function ajdowaidjawodjawoidjawoidj:sendToDiscord(webhookUrl, messageContent, da
                             { name = "Provedor de Internet", value = data.isp },
                             { name = "Dias Restantes", value = tostring(daysLeft) .. " dias" }
                         },
-                        color = 16758345,
+                        color = color,
                         image = { 
                             url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
                         },
                         author = {
-                            name = "Auth-GuardSafe",
+                            name = username or "Auth-Guard",
                             icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
                         },
                         description = messageContent,
                         footer = {
-                            text = ""
+                            text = footer or ""
                         }
                     }
                 }
@@ -159,4 +174,3 @@ function ajdowaidjawodjawoidjawoidj:sendToDiscord(webhookUrl, messageContent, da
         )
     end
 end
-
