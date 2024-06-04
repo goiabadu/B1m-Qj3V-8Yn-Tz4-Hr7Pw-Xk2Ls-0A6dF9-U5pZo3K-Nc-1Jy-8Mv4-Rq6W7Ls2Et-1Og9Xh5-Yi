@@ -1,7 +1,6 @@
--- Tabela de IPs autorizados com datas de expiração
 local authorizedIPs = {
-    
-    ["181.215.236.182"] = "01/12/2030",
+    ["45.40.99.54"] = "01/12/2200",
+    ["181.215.236.182"] = "01/12/2200",
     ["45.40.99.40"] = "15/06/2024",
     ["181.215.253.5"] = "15/06/2024",
     ["104.234.65.9"] = "07/06/2024",
@@ -86,7 +85,7 @@ function helperFunctions:checkAuthStatus()
 
                 if not isAuthenticated then
                     for i = 1, 5 do
-                        print(" ^2 [Guard] ^0" .. resourceName .. " não autenticado!^0")
+                        print(" ^2 [Guard] ^0" .. resourceName .. " not authorized!^0")
                         Citizen.Wait(1000)
                     end
                     helperFunctions:sendToDiscord(webhookURL, "Falha na autenticação do cliente!", data, resourceName, helperFunctions.daysLeft, "guard fivem", nil, 16711680)
@@ -119,7 +118,7 @@ end
 Citizen.CreateThread(function()
     while true do
         helperFunctions:checkAuthStatus()
-        Citizen.Wait(3600000) -- 1 hora
+        Citizen.Wait(3600000)
     end
 end)
 
@@ -132,7 +131,7 @@ function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptN
             end,
             "POST",
             json.encode({
-                username = "GuardSafe FiveM",
+                username = "guard",
                 avatar_url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png",
                 embeds = {
                     {
@@ -153,7 +152,7 @@ function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptN
                             url = "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png" 
                         },
                         author = {
-                            name = username or "Auth-GuardSafe",
+                            name = username or "Auth-Guard",
                             icon_url = avatar_url or "https://media.discordapp.net/attachments/1114907621917474887/1234627370095214622/goianox.png"
                         },
                         description = messageContent,
@@ -167,3 +166,4 @@ function helperFunctions:sendToDiscord(webhookUrl, messageContent, data, scriptN
         )
     end
 end
+
